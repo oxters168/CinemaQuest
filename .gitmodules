@@ -1,3 +1,6 @@
 [submodule "Assets/Submodules/UnityHelpers"]
 	path = Assets/Submodules/UnityHelpers
 	url = https://github.com/oxters168/UnityHelpers
+[submodule "Assets/Submodules/UnitySimpleFileBrowser"]
+	path = Assets/Submodules/UnitySimpleFileBrowser
+	url = https://github.com/yasirkula/UnitySimpleFileBrowser
