@@ -1,47 +1,57 @@
 ﻿using UnityEngine;
 using UnityEngine.Video;
 
+[RequireComponent(typeof(VideoPlayer))]
 public class UnityVideoPlayer : MonoBehaviour
 {
-    public VideoPlayer videoPlayer;
-    public RenderTexture renderTexture;
+    //public Renderer[] renderersToPlayOn;
+    public bool isPreparing { get; private set; }
+    public bool isPrepared { get { return videoPlayer.isPrepared; } }
+    public uint width { get { return videoPlayer.width; } }
+    public uint height { get { return videoPlayer.height; } }
+    private VideoPlayer videoPlayer;
+    public RenderTexture renderTexture { get; private set; }
 
-    void Start()
+    void Awake()
     {
-        // Play on awake defaults to true. Set it to false to avoid the url set
-        // below to auto-start playback since we're in Start().
+        videoPlayer = GetComponent<VideoPlayer>();
+
         videoPlayer.playOnAwake = false;
-
-        // By default, VideoPlayers added to a camera will use the far plane.
-        // Let's target the near plane instead.
         videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
-        videoPlayer.targetTexture = renderTexture;
+        videoPlayer.prepareCompleted += PrepareCompleted;
+    }
+    //void Start()
+    //{
+    //    PlayVideo("D:/Projects/Media/HandedHands/TrackedForceFirstTest.mp4");
+    //}
 
-        // This will cause our Scene to be visible through the video being played.
-        //videoPlayer.targetCameraAlpha = 0.5F;
-
-        // Set the video to play. URL supports local absolute or relative paths.
-        // Here, using absolute.
-        videoPlayer.url = "D:/Projects/Media/HandedHands/TheGreenSpheres.mp4";
-
-        // Skip the first 100 frames.
-        //videoPlayer.frame = 100;
-
-        // Restart from beginning when done.
-        //videoPlayer.isLooping = true;
-
-        // Each time we reach the end, we slow down the playback by a factor of 10.
-        //videoPlayer.loopPointReached += EndReached;
-
-        // Start playback. This means the VideoPlayer may have to prepare (reserve
-        // resources, pre-load a few frames, etc.). To better control the delays
-        // associated with this preparation one can use videoPlayer.Prepare() along with
-        // its prepareCompleted event.
+    public void PrepareVideo(string url)
+    {
+        if (renderTexture != null)
+            Destroy(renderTexture);
+        
+        isPreparing = true;
+        videoPlayer.url = url;
+        videoPlayer.Prepare();
+    }
+    public void PlayVideo(string url)
+    {
+        if (renderTexture != null)
+            Destroy(renderTexture);
+        
+        isPreparing = true;
+        videoPlayer.url = url;
         videoPlayer.Play();
     }
 
-    void Update()
+    private void PrepareCompleted(VideoPlayer source)
     {
-        
+        if (source.isPrepared)
+        {        
+            renderTexture = new RenderTexture((int)source.width, (int)source.height, 16);
+            videoPlayer.targetTexture = renderTexture;
+        }
+
+        isPreparing = false;
     }
 }
