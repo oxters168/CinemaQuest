@@ -61,3 +61,6 @@ crashlytics-build.properties
 #Imported
 Assets/Imported/Clayxels/*
 !Assets/Imported/Clayxels/.gitkeep
+
+Assets/Oculus/*
+!Assets/Oculus/.gitkeep
