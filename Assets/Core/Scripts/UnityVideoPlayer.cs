@@ -43,6 +43,14 @@ public class UnityVideoPlayer : MonoBehaviour
         videoPlayer.url = url;
         videoPlayer.Play();
     }
+    public void Play()
+    {
+        videoPlayer.Play();
+    }
+    public void Pause()
+    {
+        videoPlayer.Pause();
+    }
 
     private void PrepareCompleted(VideoPlayer source)
     {
