@@ -26,7 +26,19 @@ public class ScreenInterface : MonoBehaviour
             content.transform.rotation = background.rotation;
 
             float ratio = (float)unityVideoPlayer.width / unityVideoPlayer.height;
-            content.transform.localScale = new Vector3(background.transform.localScale.y * ratio, background.transform.localScale.y, background.transform.localScale.z);
+            float width;
+            float height;
+
+            width = background.transform.localScale.y * ratio;
+            if (width > background.transform.localScale.x)
+            {
+                width = background.transform.localScale.x;
+                height = background.transform.localScale.x / ratio;
+            }
+            else
+                height = background.transform.localScale.y;
+            
+            content.transform.localScale = new Vector3(width, height, background.transform.localScale.z);
         }
         else
             shown = false;
