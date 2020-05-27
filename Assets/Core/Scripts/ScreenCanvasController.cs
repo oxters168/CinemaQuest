@@ -7,6 +7,6 @@ public class ScreenCanvasController : MonoBehaviour
 
     void Update()
     {
-        loadingText.SetActive(unityVideoPlayer.isPreparing);
+        loadingText.SetActive(unityVideoPlayer != null && unityVideoPlayer.isPreparing);
     }
 }

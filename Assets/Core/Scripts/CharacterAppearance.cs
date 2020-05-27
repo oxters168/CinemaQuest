@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
+//using Photon.Pun;
 
-public class CharacterAppearance : MonoBehaviour
+public class CharacterAppearance : MonoBehaviour//, IPunObservable
 {
     public enum ikId
     {
@@ -23,6 +23,9 @@ public class CharacterAppearance : MonoBehaviour
         public Quaternion rotation;
     }
 
+    //private PhotonView PV { get { if (_pv == null) _pv = GetComponent<PhotonView>(); return _pv; } }
+    //private PhotonView _pv;
+
     public CharacterCustomization maleCharacter, femaleCharacter;
     public bool isFemale;
     public bool hideHead;
@@ -35,6 +38,20 @@ public class CharacterAppearance : MonoBehaviour
         UpdateAppearance();
         UpdateIK();
     }
+
+    /*public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo messageInfo)
+    {
+        if (PV != null && PV.IsMine && stream.IsWriting)
+        {
+            stream.SendNext(isFemale);
+            stream.SendNext(transformIKs);
+        }
+        if (stream.IsReading)
+        {
+            isFemale = (bool)stream.ReceiveNext();
+            transformIKs = (List<TransformIK>)stream.ReceiveNext();
+        }
+    }*/
 
     private void UpdateAppearance()
     {

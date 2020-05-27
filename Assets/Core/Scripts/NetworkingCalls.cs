@@ -9,17 +9,24 @@ public class NetworkingCalls : MonoBehaviourPunCallbacks, IOnEventCallback
     public UnityEngine.Events.UnityEvent onPlay;
     public UnityEngine.Events.UnityEvent onPause;
 
+    void Awake()
+    {
+        Application.quitting += OnQuitting;
+    }
     public override void OnEnable()
     {
         base.OnEnable();
         PhotonNetwork.AddCallbackTarget(this);
     }
-
     public override void OnDisable()
     {
         base.OnDisable();
         PhotonNetwork.RemoveCallbackTarget(this);
-        if (PhotonNetwork.InRoom)
+    }
+
+    private void OnQuitting()
+    {
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
         {
             PhotonNetwork.LeaveRoom();
             Debug.LogWarning("PUN: Left room on disable");
@@ -32,7 +39,10 @@ public class NetworkingCalls : MonoBehaviourPunCallbacks, IOnEventCallback
     }
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom("TestRoom");
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.IsVisible = true;
+        roomOptions.MaxPlayers = 4;
+        PhotonNetwork.CreateRoom("TestRoom", roomOptions, TypedLobby.Default);
     }
     public void JoinRoom()
     {
@@ -54,6 +64,11 @@ public class NetworkingCalls : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         DebugPanel.Log("PUN", errorInfo.Info, 10f);
         Debug.LogError(errorInfo.Info);
+    }
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        DebugPanel.Log("PUN", returnCode + " " + message, 10f);
+        Debug.LogError(returnCode + " " + message);
     }
 
     public void CallPlayEvent()

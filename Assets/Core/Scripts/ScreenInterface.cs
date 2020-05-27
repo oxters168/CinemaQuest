@@ -13,7 +13,7 @@ public class ScreenInterface : MonoBehaviour
 
     void Update()
     {
-        isShowing = !unityVideoPlayer.isPreparing && unityVideoPlayer.isPrepared;
+        isShowing = unityVideoPlayer != null && !unityVideoPlayer.isPreparing && unityVideoPlayer.isPrepared;
         content.gameObject.SetActive(isShowing);
         if (isShowing)
         {
