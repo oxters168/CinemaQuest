@@ -3078,29 +3078,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1295222949}
   m_CullTransparentMesh: 0
---- !u!1 &1435456530 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6217314517410171012, guid: 7090bba70ffbb12468651e11c4e9c262,
-    type: 3}
-  m_PrefabInstance: {fileID: 1620578201}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1435456531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1435456530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8176845345e3f504c81747c2167dd07e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterPrefab: {fileID: 2988442143108463108, guid: 7d5f591e270c0d44ab2a8a7e97ac87d3,
-    type: 3}
-  characterPrefabNetworked: {fileID: 1405992878189584630, guid: b42f65744e49cca4ea0bdd54be5c2ef3,
-    type: 3}
-  ovrRig: {fileID: 707682415}
 --- !u!1 &1441229582
 GameObject:
   m_ObjectHideFlags: 0
@@ -3345,16 +3322,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 229570003476976163, guid: 7090bba70ffbb12468651e11c4e9c262,
-        type: 3}
-      propertyPath: m_CastShadows
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 526481188471963564, guid: 7090bba70ffbb12468651e11c4e9c262,
-        type: 3}
-      propertyPath: m_CastShadows
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 1435456531, guid: 7090bba70ffbb12468651e11c4e9c262, type: 3}
+      propertyPath: ovrRig
+      value: 
+      objectReference: {fileID: 707682415}
     - target: {fileID: 3240490348588627993, guid: 7090bba70ffbb12468651e11c4e9c262,
         type: 3}
       propertyPath: unityVideoPlayer
