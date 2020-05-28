@@ -5,6 +5,7 @@ using UnityEngine.Video;
 public class UnityVideoPlayer : MonoBehaviour
 {
     //public Renderer[] renderersToPlayOn;
+    public AudioSource audioSource;
     public bool isPreparing { get; private set; }
     public bool isPrepared { get { return videoPlayer.isPrepared; } }
     public uint width { get { return videoPlayer.width; } }
@@ -15,6 +16,7 @@ public class UnityVideoPlayer : MonoBehaviour
     void Awake()
     {
         videoPlayer = GetComponent<VideoPlayer>();
+        videoPlayer.SetTargetAudioSource(0, audioSource);
 
         videoPlayer.playOnAwake = false;
         videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
