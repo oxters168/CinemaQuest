@@ -3832,7 +3832,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 1537561335065409665}
       rightThighBone: {fileID: 1537561335065409667}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 1537561335065409815}
       maintainRotationWeight: 0
@@ -3880,7 +3880,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.0035919438, y: 0.7001549, z: 2.9896536}
+    IKPosition: {x: 0.0035919438, y: 1.4401549, z: 2.9996538}
     IKPositionWeight: 1
     root: {fileID: 1537561335065409869}
     target: {fileID: 1981902526265862108}
@@ -3928,8 +3928,8 @@ MonoBehaviour:
       axis: {x: -0.042125195, y: 0.04650111, z: 0.9980296}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -4867,28 +4867,28 @@ MonoBehaviour:
   - {fileID: 1981902526265862108}
   transformIKs:
   - id: 0
-    position: {x: -0.26, y: 0.59, z: 0.26}
-    rotation: {x: 0.44194567, y: -0.46058348, z: -0.26817778, w: 0.7215453}
+    position: {x: -0.1800003, y: 0.79, z: 0.3440001}
+    rotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
   - id: 1
-    position: {x: 0.26, y: 0.59, z: 0.18}
-    rotation: {x: -0.64864814, y: 0.07792967, z: -0.06703067, w: -0.7541149}
+    position: {x: 0.23600006, y: 0.699, z: 0.286}
+    rotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
   - id: 2
     position: {x: -0.15, y: 0, z: 0.5}
-    rotation: {x: -0.3396192, y: 0.69285667, z: 0.61003536, w: 0.18018144}
+    rotation: {x: -0.33703518, y: 0.5969263, z: 0.7010191, w: 0.19661765}
   - id: 3
-    position: {x: -0.13, y: 0.44, z: 0.1}
+    position: {x: -0.08, y: 0.44, z: 0.1}
     rotation: {x: 0, y: 0, z: 0, w: 0}
   - id: 4
     position: {x: 0.18, y: 0, z: 0.61}
     rotation: {x: -0.115862384, y: -0.53230727, z: -0.83811164, w: 0.028174378}
   - id: 5
-    position: {x: 0.03, y: 0.44, z: 0.1}
+    position: {x: 0.08, y: 0.44, z: 0.1}
     rotation: {x: 0, y: 0, z: 0, w: 0}
   - id: 6
     position: {x: 0, y: 0.48, z: -0.11}
     rotation: {x: 0, y: 0, z: 0, w: 0}
   - id: 7
-    position: {x: 0, y: 1.18, z: 0.32}
+    position: {x: -0.1260004, y: 1.243, z: 1.6669998}
     rotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &1593587020107044771
 MonoBehaviour:
@@ -6950,7 +6950,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 3176966941457152454}
       rightThighBone: {fileID: 3176966941457152452}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 3176966941457152080}
       maintainRotationWeight: 0
@@ -6998,7 +6998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.0035919438, y: 0.7001549, z: 2.9896536}
+    IKPosition: {x: 0.0035919438, y: 1.4401549, z: 2.9996538}
     IKPositionWeight: 1
     root: {fileID: 3176966941457152010}
     target: {fileID: 1981902526265862108}
@@ -7046,8 +7046,8 @@ MonoBehaviour:
       axis: {x: -0.042125195, y: 0.04650111, z: 0.9980296}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -10331,7 +10331,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 3653100155453278507}
       rightThighBone: {fileID: 3653100155453278501}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 3653100155453278347}
       maintainRotationWeight: 0
@@ -10379,7 +10379,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.004025343, y: 0.67973256, z: 2.9745927}
+    IKPosition: {x: 0.004025343, y: 1.4197326, z: 2.9845927}
     IKPositionWeight: 1
     root: {fileID: 3653100155453278379}
     target: {fileID: 1981902526265862108}
@@ -10426,8 +10426,8 @@ MonoBehaviour:
       axis: {x: 0.019420011, y: 0.059976406, z: 0.9980109}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -15685,7 +15685,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 3653100156437914965}
       rightThighBone: {fileID: 3653100156437914971}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 3653100156437914869}
       maintainRotationWeight: 0
@@ -15733,7 +15733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.004025343, y: 0.67973256, z: 2.9745927}
+    IKPosition: {x: 0.004025343, y: 1.4197326, z: 2.9845927}
     IKPositionWeight: 1
     root: {fileID: 3653100156437914837}
     target: {fileID: 1981902526265862108}
@@ -15780,8 +15780,8 @@ MonoBehaviour:
       axis: {x: 0.019420011, y: 0.059976406, z: 0.9980109}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -19076,7 +19076,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 3653100157197144872}
       rightThighBone: {fileID: 3653100157197144870}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 3653100157197144712}
       maintainRotationWeight: 0
@@ -19124,7 +19124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.004025343, y: 0.67973256, z: 2.9745927}
+    IKPosition: {x: 0.004025343, y: 1.4197326, z: 2.9845927}
     IKPositionWeight: 1
     root: {fileID: 3653100157197144744}
     target: {fileID: 1981902526265862108}
@@ -19171,8 +19171,8 @@ MonoBehaviour:
       axis: {x: 0.019420011, y: 0.059976406, z: 0.9980109}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -24979,7 +24979,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 5034951450674342877}
       rightThighBone: {fileID: 5034951450674342879}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 5034951450674342475}
       maintainRotationWeight: 0
@@ -25027,7 +25027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.0035919438, y: 0.7001549, z: 2.9896536}
+    IKPosition: {x: 0.0035919438, y: 1.4401549, z: 2.9996538}
     IKPositionWeight: 1
     root: {fileID: 5034951450674342417}
     target: {fileID: 1981902526265862108}
@@ -25075,8 +25075,8 @@ MonoBehaviour:
       axis: {x: -0.042125195, y: 0.04650111, z: 0.9980296}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -31646,7 +31646,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 5264553136181783731}
       rightThighBone: {fileID: 5264553136181783729}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 5264553136181783841}
       maintainRotationWeight: 0
@@ -31694,7 +31694,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.003591947, y: 0.70015514, z: 2.9896536}
+    IKPosition: {x: 0.003591947, y: 1.4401551, z: 2.9996538}
     IKPositionWeight: 1
     root: {fileID: 5264553136181783819}
     target: {fileID: 1981902526265862108}
@@ -31743,8 +31743,8 @@ MonoBehaviour:
       axis: {x: -0.042125188, y: 0.046500992, z: 0.99802965}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
@@ -34546,7 +34546,7 @@ MonoBehaviour:
       leftThighBone: {fileID: 6691779172863018935}
       rightThighBone: {fileID: 6691779172863018937}
       iterations: 3
-      twistWeight: 1
+      twistWeight: 0
     boneMappings:
     - bone: {fileID: 6691779172863018519}
       maintainRotationWeight: 0
@@ -34594,7 +34594,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixTransforms: 1
   solver:
-    IKPosition: {x: 0.004025343, y: 0.67973256, z: 2.9745927}
+    IKPosition: {x: 0.004025343, y: 1.4197326, z: 2.9845927}
     IKPositionWeight: 1
     root: {fileID: 6691779172863018551}
     target: {fileID: 1981902526265862108}
@@ -34641,8 +34641,8 @@ MonoBehaviour:
       axis: {x: 0.019420011, y: 0.059976406, z: 0.9980109}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
-    bodyWeight: 0.5
-    headWeight: 0.5
+    bodyWeight: 0.3
+    headWeight: 1
     eyesWeight: 1
     clampWeight: 0.5
     clampWeightHead: 0.5
