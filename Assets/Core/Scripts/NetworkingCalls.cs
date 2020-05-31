@@ -1,86 +1,147 @@
 ﻿using UnityEngine;
 using UnityHelpers;
-using Photon.Pun;
-using Photon.Realtime;
-using ExitGames.Client.Photon;
+using Mirror;
 
-public class NetworkingCalls : MonoBehaviourPunCallbacks, IOnEventCallback
+public class NetworkingCalls : NetworkManager
 {
+    public static NetworkingCalls networkingCallsInScene { get; private set; }
+
+    [Space(10)]
+    public GameObject characterPrefab;
+    public GameObject characterPrefabNetworked;
+    private GameObject currentMainCharacter;
+    private bool currentlyNetworked;
+    public OVRRigInfo ovrRig;
+    public Theater theater;
+    //public string uri;
+    public bool tempSpawn = true;
+
+    [Space(10)]
     public UnityEngine.Events.UnityEvent onPlay;
     public UnityEngine.Events.UnityEvent onPause;
 
-    void Awake()
+    public override void Awake()
     {
+        base.Awake();
         Application.quitting += OnQuitting;
+        networkingCallsInScene = this;
     }
-    public override void OnEnable()
+    public override void Start()
     {
-        base.OnEnable();
-        PhotonNetwork.AddCallbackTarget(this);
+        base.Start();
+        if (tempSpawn)
+            InitCharacter(false);
     }
-    public override void OnDisable()
+
+    public override void OnStartClient()
     {
-        base.OnDisable();
-        PhotonNetwork.RemoveCallbackTarget(this);
+        base.OnStartClient();
+        DebugPanel.Log("Mirror", "OnStartClient", 5f);
+        Debug.LogWarning("Mirror: OnStartClient");
+        DestroyCharacter();
+        //InitCharacter(true);
+    }
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        DebugPanel.Log("Mirror", "OnStartServer", 5f);
+        Debug.LogWarning("Mirror: OnStartServer");
+        //InitCharacter(true);
+    }
+    public override void OnClientConnect(NetworkConnection conn)
+    {
+        base.OnClientConnect(conn);
+        //Happens on client side when connecting to the server
+        DebugPanel.Log("Mirror", "OnClientConnect " + conn.address, 5f);
+        Debug.LogWarning("Mirror: OnClientConnect " + conn.address);
+    }
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        base.OnServerConnect(conn);
+        //Happens on server side when client connects to the server
+        DebugPanel.Log("Mirror", "OnServerConnect " + conn.address, 5f);
+        Debug.LogWarning("Mirror: OnServerConnect " + conn.address);
+        //InitCharacter(true, conn);
+    }
+    public override void OnServerReady(NetworkConnection conn)
+    {
+        base.OnServerReady(conn);
+        DebugPanel.Log("Mirror", "OnServerReady " + conn.address, 5f);
+        Debug.LogWarning("Mirror: OnServerReady " + conn.address);
+        //InitCharacter(true, conn);
+        //JoinRoom();
     }
 
     private void OnQuitting()
     {
-        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        if (NetworkServer.active || NetworkClient.active)
         {
-            PhotonNetwork.LeaveRoom();
-            Debug.LogWarning("PUN: Left room on disable");
+            DebugPanel.Log("Mirror", "Shutting down", 5f);
+            Debug.LogWarning("Mirror: Shutting down");
+            NetworkManager.Shutdown();
         }
+    }
+
+    private void DestroyCharacter()
+    {
+        if (currentMainCharacter != null)
+            Destroy(currentMainCharacter);
+    }
+    private void InitCharacter(bool networked, NetworkConnection conn = null)
+    {
+        string debugMessage = "Instantiating " + (networked ? "" : "non-") + "networked character";
+        DebugPanel.Log("PUN", debugMessage, 5);
+        Debug.LogWarning(debugMessage);
+
+        DestroyCharacter();
+
+        if (networked)
+        {
+            currentMainCharacter = Instantiate(characterPrefabNetworked);
+            NetworkServer.Spawn(currentMainCharacter, conn);
+            //currentMainCharacter = PhotonNetwork.Instantiate(characterPrefabNetworked.name, Vector3.zero, Quaternion.identity);
+            currentlyNetworked = true;
+        }
+        else
+        {
+            currentMainCharacter = Instantiate(characterPrefab);
+            currentlyNetworked = false;
+        }
+
+        if (theater != null)
+            currentMainCharacter.GetComponent<ChairTraverser>().Teleport(theater.GetRandomChair());
+        if (ovrRig != null)
+            currentMainCharacter.GetComponent<CharacterInput>().ovrRig = ovrRig;
     }
 
     public void ConnectToPun()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        StartServer();
+        //PhotonNetwork.ConnectUsingSettings();
     }
     public void CreateRoom()
     {
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.IsVisible = true;
-        roomOptions.MaxPlayers = 4;
-        PhotonNetwork.CreateRoom("TestRoom", roomOptions, TypedLobby.Default);
+        StartHost();
+        //StartServer();
+        //NetworkServer.Listen(4);
     }
     public void JoinRoom()
     {
-        PhotonNetwork.JoinRoom("TestRoom");
-    }
-    public override void OnConnectedToMaster()
-    {
-        DebugPanel.Log("PUN", "Connected", 3f);
-    }
-    public override void OnJoinedRoom()
-    {
-        DebugPanel.Log("PUN", "Joined Room", 3f);
-    }
-    public override void OnCreatedRoom()
-    {
-        DebugPanel.Log("PUN", "Created Room", 3f);
-    }
-    public override void OnErrorInfo(Photon.Realtime.ErrorInfo errorInfo)
-    {
-        DebugPanel.Log("PUN", errorInfo.Info, 10f);
-        Debug.LogError(errorInfo.Info);
-    }
-    public override void OnJoinRoomFailed(short returnCode, string message)
-    {
-        DebugPanel.Log("PUN", returnCode + " " + message, 10f);
-        Debug.LogError(returnCode + " " + message);
+        NetworkClient.RegisterHandler<NetworkEvent>(OnEvent); //Will probably be better off in one of the start/stop functions
+        StartClient();
+        //NetworkClient.Connect(uri);
     }
 
     public void CallPlayEvent()
     {
-        if (PhotonNetwork.InRoom)
+        if (NetworkServer.active || NetworkClient.active)
             RaiseNetworkedEvent(1); // Custom Event 1: Used as "PlayTogether" event
         else
             InvokePlay();
     }
     public void CallPauseEvent()
     {
-        if (PhotonNetwork.InRoom)
+        if (NetworkServer.active || NetworkClient.active)
             RaiseNetworkedEvent(2); // Custom Event 2: Used as "PauseTogether" event
         else
             InvokePause();
@@ -88,16 +149,24 @@ public class NetworkingCalls : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void RaiseNetworkedEvent(byte eventCode)
     {
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
-        SendOptions sendOptions = new SendOptions { Reliability = true };
-        PhotonNetwork.RaiseEvent(eventCode, null, raiseEventOptions, sendOptions);
+        if (NetworkServer.active)
+        {
+            var networkEvent = new NetworkEvent() { eventCode = eventCode };
+            NetworkServer.SendToAll(networkEvent);
+            OnEvent(networkEvent);
+        }
+        else
+        {
+            DebugPanel.Log("Mirror", "Cannot send event if not server", 5f);
+            Debug.LogWarning("Mirror: Cannot send event if not server");
+        }
     }
 
-    public void OnEvent(EventData photonEvent)
+    public void OnEvent(NetworkEvent networkEvent)
     {
-        if (photonEvent.Code == 1)
+        if (networkEvent.eventCode == 1)
             InvokePlay();
-        else if (photonEvent.Code == 2)
+        else if (networkEvent.eventCode == 2)
             InvokePause();
     }
 
@@ -108,5 +177,10 @@ public class NetworkingCalls : MonoBehaviourPunCallbacks, IOnEventCallback
     private void InvokePause()
     {
         onPause?.Invoke();
+    }
+
+    public class NetworkEvent : MessageBase
+    {
+        public byte eventCode;
     }
 }

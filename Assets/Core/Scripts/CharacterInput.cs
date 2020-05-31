@@ -1,28 +1,37 @@
 ﻿using UnityEngine;
 using UnityHelpers;
-using Photon.Pun;
+using Mirror;
 
-public class CharacterInput : MonoBehaviour, IPunObservable
+public class CharacterInput : NetworkBehaviour
 {
-    private PhotonView PV { get { if (_pv == null) _pv = GetComponent<PhotonView>(); return _pv; } }
-    private PhotonView _pv;
-
     private Quaternion handCorrection = Quaternion.Euler(90, 0, 0);
     
     private CharacterAppearance Appearance { get { if (_Appearance == null) _Appearance = GetComponent<CharacterAppearance>(); return _Appearance; } }
     private CharacterAppearance _Appearance;
 
+    private bool isOwner;
     public bool isVREnabled;
+    public Transform leftHand, rightHand, head;
     public OVRRigInfo ovrRig;
     public Transform ovrRigFollowTransform;
     private CharacterAppearance.TransformIK[] rigData;
     public Transform ikParent;
+    private bool sentPlay, sentPause;
 
+    public override void OnStartAuthority()
+    {
+        Debug.LogWarning("CharacterInput: OnStartAuthority");
+        isOwner = true;
+        ovrRig = NetworkingCalls.networkingCallsInScene.ovrRig;
+    }
+    
     void Update()
     {
-        if (PV != null && PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
-            isVREnabled = PV.IsMine;
+        if (NetworkServer.active || NetworkClient.active)
+            isVREnabled = isOwner;
         
+        PlaybackControls();
+
         Appearance.hideHead = isVREnabled;
         if (ovrRig != null)
         {
@@ -30,10 +39,20 @@ public class CharacterInput : MonoBehaviour, IPunObservable
             ovrRig.transform.position = ovrRigFollowTransform.position;
             ovrRig.transform.rotation = ovrRigFollowTransform.rotation;
 
-            SetRigData(ovrRig.leftController.position, ovrRig.leftController.rotation, ovrRig.rightController.position, ovrRig.rightController.rotation, ovrRig.headTarget.position);
+            //SetRigData(ovrRig.leftController.position, ovrRig.leftController.rotation, ovrRig.rightController.position, ovrRig.rightController.rotation, ovrRig.headTarget.position);
+            leftHand.position = ovrRig.leftController.position;
+            leftHand.rotation = ovrRig.leftController.rotation;
+            rightHand.position = ovrRig.rightController.position;
+            rightHand.rotation = ovrRig.rightController.rotation;
+            head.position = ovrRig.headTarget.position;
         }
+
+        SetRigData(leftHand.position, leftHand.rotation, rightHand.position, rightHand.rotation, head.position);
         
-        Appearance.SetIKTargets(rigData);
+        if (rigData != null)
+            Appearance.SetIKTargets(rigData);
+        //else
+        //    Debug.LogWarning("CharacterInput: No rig data received");
     }
 
     private void SetRigData(Vector3 leftHandPosition, Quaternion leftHandRotation, Vector3 rightHandPosition, Quaternion rightHandRotation, Vector3 headPosition)
@@ -59,25 +78,38 @@ public class CharacterInput : MonoBehaviour, IPunObservable
         };
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo messageInfo)
+    private void PlaybackControls()
     {
-        if (ovrRig != null && isVREnabled && PV != null && PV.IsMine && stream.IsWriting)
+        if (isOwner)
         {
-            stream.SendNext(ovrRig.leftController.position);
-            stream.SendNext(ovrRig.leftController.rotation);
-            stream.SendNext(ovrRig.rightController.position);
-            stream.SendNext(ovrRig.rightController.rotation);
-            stream.SendNext(ovrRig.headTarget.position);
-        }
-        if ((ovrRig == null || !isVREnabled) && ovrRig == null && PV != null && !PV.IsMine && stream.IsReading)
-        {
-            var leftHandPosition = (Vector3)stream.ReceiveNext();
-            var leftHandRotation = (Quaternion)stream.ReceiveNext();
-            var rightHandPosition = (Vector3)stream.ReceiveNext();
-            var rightHandRotation = (Quaternion)stream.ReceiveNext();
-            var headPosition = (Vector3)stream.ReceiveNext();
+            bool bPressed = OVRInput.Get(OVRInput.RawButton.B, OVRInput.Controller.All);
+            bool yPressed = OVRInput.Get(OVRInput.RawButton.Y, OVRInput.Controller.All);
+            if (bPressed && !sentPlay)
+            {
+                CmdCallPlay();
+                sentPlay = true;
+            }
+            else if (!bPressed)
+                sentPlay = false;
 
-            SetRigData(leftHandPosition, leftHandRotation, rightHandPosition, rightHandRotation, headPosition);
+            if (yPressed && !sentPause)
+            {
+                CmdCallPause();
+                sentPause = true;
+            }
+            else if (!yPressed)
+                sentPause = false;
         }
+    }
+
+    [Command]
+    public void CmdCallPlay()
+    {
+        NetworkingCalls.networkingCallsInScene.CallPlayEvent();
+    }
+    [Command]
+    public void CmdCallPause()
+    {
+        NetworkingCalls.networkingCallsInScene.CallPauseEvent();
     }
 }

@@ -1356,7 +1356,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &613409908
 GameObject:
@@ -1917,9 +1917,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 734118236}
-  - {fileID: 1904671156}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &707682415
 MonoBehaviour:
@@ -2114,7 +2113,7 @@ GameObject:
   - component: {fileID: 917799204}
   - component: {fileID: 917799203}
   m_Layer: 5
-  m_Name: ConnectButton
+  m_Name: PrepareVideoButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2183,15 +2182,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 917986565}
-        m_MethodName: ConnectToPun
-        m_Mode: 1
+      - m_Target: {fileID: 1958222753}
+        m_MethodName: PrepareVideo
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: D:/Projects/Media/CinemaQuest/MultiplayerFromEditor.mp4
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &917799204
@@ -2241,6 +2240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 917986566}
   - component: {fileID: 917986565}
+  - component: {fileID: 917986567}
   m_Layer: 0
   m_Name: NetworkingCalls
   m_TagString: Untagged
@@ -2260,6 +2260,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fadbbb83d953cff498f0dcffc24341ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 1
+  runInBackground: 1
+  startOnHeadless: 1
+  showDebugMessages: 1
+  serverTickRate: 30
+  offlineScene: 
+  onlineScene: 
+  transport: {fileID: 917986567}
+  networkAddress: oxgames.co
+  maxConnections: 4
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 1405992878189584630, guid: b42f65744e49cca4ea0bdd54be5c2ef3,
+    type: 3}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  spawnPrefabs: []
+  characterPrefab: {fileID: 2988442143108463108, guid: 7d5f591e270c0d44ab2a8a7e97ac87d3,
+    type: 3}
+  characterPrefabNetworked: {fileID: 1405992878189584630, guid: b42f65744e49cca4ea0bdd54be5c2ef3,
+    type: 3}
+  ovrRig: {fileID: 707682415}
+  theater: {fileID: 1620578202}
+  tempSpawn: 1
   onPlay:
     m_PersistentCalls:
       m_Calls:
@@ -2302,6 +2327,48 @@ Transform:
   m_Father: {fileID: 1904671156}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &917986567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917986564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClientConnected:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClientDataReceived:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClientError:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClientDisconnected:
+    m_PersistentCalls:
+      m_Calls: []
+  OnServerConnected:
+    m_PersistentCalls:
+      m_Calls: []
+  OnServerDataReceived:
+    m_PersistentCalls:
+      m_Calls: []
+  OnServerError:
+    m_PersistentCalls:
+      m_Calls: []
+  OnServerDisconnected:
+    m_PersistentCalls:
+      m_Calls: []
+  port: 7777
+  NoDelay: 1
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
 --- !u!1 &942927886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2670,7 +2737,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1087644719
 GameObject:
@@ -2815,7 +2882,7 @@ GameObject:
   - component: {fileID: 1151256302}
   - component: {fileID: 1151256301}
   m_Layer: 5
-  m_Name: MultiplayerCanvas (1)
+  m_Name: TestCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2897,7 +2964,7 @@ RectTransform:
   - {fileID: 52209120}
   - {fileID: 674152777}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: -51.788002, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3524,6 +3591,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7090bba70ffbb12468651e11c4e9c262, type: 3}
+--- !u!114 &1620578202 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1435456531, guid: 7090bba70ffbb12468651e11c4e9c262,
+    type: 3}
+  m_PrefabInstance: {fileID: 1620578201}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8176845345e3f504c81747c2167dd07e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1749886325
 GameObject:
   m_ObjectHideFlags: 0
@@ -3756,7 +3835,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1904671155}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.609, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 616493329}
@@ -3766,8 +3845,8 @@ Transform:
   - {fileID: 666576442}
   - {fileID: 181095979}
   - {fileID: 2125773897}
-  m_Father: {fileID: 707682414}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1923485567
 GameObject:
@@ -3916,9 +3995,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Connect
-
-'
+  m_Text: Prepare
 --- !u!222 &1945246412
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4004,7 +4081,7 @@ Transform:
   m_LocalScale: {x: 10, y: 5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2042866379
 GameObject:

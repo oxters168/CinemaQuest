@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityHelpers;
 
 public class OculusInputToChairTraverse : MonoBehaviour
 {

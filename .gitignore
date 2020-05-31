@@ -69,8 +69,8 @@ Assets/Imported/Clayxels/*
 Assets/Oculus/*
 !Assets/Oculus/.gitkeep
 
-Assets/Photon/*
-!Assets/Photon/.gitkeep
+Assets/Mirror/*
+!Assets/Mirror/.gitkeep
 
 Assets/TextMesh Pro/*
 !Assets/TextMesh Pro/.gitkeep

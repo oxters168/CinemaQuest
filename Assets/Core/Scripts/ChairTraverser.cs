@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
+using UnityHelpers;
 
 public class ChairTraverser : MonoBehaviour
 {
+    //private CharacterInput Character { get { if (_character == null) _character = GetComponent<CharacterInput>(); return _character; } }
+    //private CharacterInput _character;
+
     public bool highlightChairs;
     public bool teleport;
     private bool teleported;
