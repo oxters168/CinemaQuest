@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityHelpers;
 using Mirror;
+using System;
 
 public class CharacterInput : NetworkBehaviour
 {
@@ -18,11 +19,22 @@ public class CharacterInput : NetworkBehaviour
     public Transform ikParent;
     private bool sentPlay, sentPause;
 
+    void Start()
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            isVREnabled = true;
+            ovrRig = NetworkingCalls.networkingCallsInScene.ovrRig;
+            NetworkingCalls.networkingCallsInScene.localClientCharacter = gameObject;
+        }
+    }
     public override void OnStartAuthority()
     {
+        base.OnStartAuthority();
         Debug.LogWarning("CharacterInput: OnStartAuthority");
         isOwner = true;
         ovrRig = NetworkingCalls.networkingCallsInScene.ovrRig;
+        NetworkingCalls.networkingCallsInScene.localClientCharacter = gameObject;
     }
     
     void Update()
@@ -80,36 +92,93 @@ public class CharacterInput : NetworkBehaviour
 
     private void PlaybackControls()
     {
-        if (isOwner)
+        bool bPressed = OVRInput.Get(OVRInput.RawButton.B, OVRInput.Controller.All);
+        bool yPressed = OVRInput.Get(OVRInput.RawButton.Y, OVRInput.Controller.All);
+        if (bPressed && !sentPlay)
         {
-            bool bPressed = OVRInput.Get(OVRInput.RawButton.B, OVRInput.Controller.All);
-            bool yPressed = OVRInput.Get(OVRInput.RawButton.Y, OVRInput.Controller.All);
-            if (bPressed && !sentPlay)
+            SendPlay();
+            sentPlay = true;
+        }
+        else if (!bPressed)
+            sentPlay = false;
+
+        if (yPressed && !sentPause)
+        {
+            SendPause();
+            sentPause = true;
+        }
+        else if (!yPressed)
+            sentPause = false;
+    }
+
+    public void SendPlay()
+    {
+        DoTheThing(
+            () =>
+            {
+                NetworkingCalls.networkingCallsInScene.CallPlayEventAsServer();
+            },
+            () =>
             {
                 CmdCallPlay();
-                sentPlay = true;
             }
-            else if (!bPressed)
-                sentPlay = false;
-
-            if (yPressed && !sentPause)
+        );
+    }
+    public void SendPause()
+    {
+        DoTheThing(
+            () =>
+            {
+                NetworkingCalls.networkingCallsInScene.CallPauseEventAsServer();
+            },
+            () =>
             {
                 CmdCallPause();
-                sentPause = true;
             }
-            else if (!yPressed)
-                sentPause = false;
+        );
+    }
+    public void SendSeek(long frame)
+    {
+        DoTheThing(
+            () =>
+            {
+                NetworkingCalls.networkingCallsInScene.CallSeekEventAsServer(frame);
+            },
+            () =>
+            {
+                CmdCallSeek(frame);
+            }
+        );
+    }
+
+    private void DoTheThing(Action ifNonNetworked, Action ifNetworked)
+    {
+        if (NetworkServer.active || NetworkClient.active)
+        {
+            if (isOwner)
+            {
+                ifNetworked?.Invoke();
+            }
+        }
+        else
+        {
+            ifNonNetworked?.Invoke();
         }
     }
 
     [Command]
-    public void CmdCallPlay()
+    private void CmdCallPlay()
     {
-        NetworkingCalls.networkingCallsInScene.CallPlayEvent();
+        NetworkingCalls.networkingCallsInScene.CallPlayEventAsServer();
     }
     [Command]
-    public void CmdCallPause()
+    private void CmdCallPause()
     {
-        NetworkingCalls.networkingCallsInScene.CallPauseEvent();
+        NetworkingCalls.networkingCallsInScene.CallPauseEventAsServer();
+    }
+    [Command]
+    private void CmdCallSeek(long frame)
+    {
+        NetworkingCalls.networkingCallsInScene.CallSeekEventAsServer(frame);
     }
 }

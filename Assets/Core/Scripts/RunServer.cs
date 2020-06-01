@@ -4,6 +4,6 @@ public class RunServer : MonoBehaviour
 {
     void Start()
     {
-        GetComponent<NetworkingCalls>().ConnectToPun();
+        GetComponent<NetworkingCalls>().StartServerInstance();
     }
 }

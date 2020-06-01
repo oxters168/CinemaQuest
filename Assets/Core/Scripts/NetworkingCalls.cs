@@ -1,24 +1,30 @@
 ﻿using UnityEngine;
 using UnityHelpers;
 using Mirror;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class FloatEvent : UnityEvent<float> {}
 
 public class NetworkingCalls : NetworkManager
 {
     public static NetworkingCalls networkingCallsInScene { get; private set; }
+    public GameObject localClientCharacter;
 
     [Space(10)]
     public GameObject characterPrefab;
     public GameObject characterPrefabNetworked;
-    private GameObject currentMainCharacter;
     private bool currentlyNetworked;
     public OVRRigInfo ovrRig;
     public Theater theater;
-    //public string uri;
-    public bool tempSpawn = true;
+    public UnityVideoPlayer unityVideoPlayer;
+    public bool tempCreate;
+    private GameObject tempCharacter;
 
     [Space(10)]
-    public UnityEngine.Events.UnityEvent onPlay;
-    public UnityEngine.Events.UnityEvent onPause;
+    public UnityEvent onPlay;
+    public UnityEvent onPause;
+    public FloatEvent onScrub;
 
     public override void Awake()
     {
@@ -29,47 +35,60 @@ public class NetworkingCalls : NetworkManager
     public override void Start()
     {
         base.Start();
-        if (tempSpawn)
-            InitCharacter(false);
+        if (tempCreate)
+        {
+            tempCharacter = Instantiate(characterPrefab);
+            tempCharacter.GetComponent<ChairTraverser>().Teleport(theater.GetRandomChair());
+        }
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        DebugPanel.Log("Mirror", "OnStartClient", 5f);
         Debug.LogWarning("Mirror: OnStartClient");
-        DestroyCharacter();
-        //InitCharacter(true);
+        NetworkClient.RegisterHandler<PlaybackEvent>(OnPlaybackEvent);
+        NetworkClient.RegisterHandler<SeekEvent>(OnSeekEvent);
+        if (tempCharacter != null)
+            Destroy(tempCharacter);
+    }
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        Debug.LogWarning("Mirror: OnStopClient");
+        NetworkClient.UnregisterHandler<PlaybackEvent>();
+        NetworkClient.UnregisterHandler<SeekEvent>();
     }
     public override void OnStartServer()
     {
         base.OnStartServer();
-        DebugPanel.Log("Mirror", "OnStartServer", 5f);
         Debug.LogWarning("Mirror: OnStartServer");
+        if (tempCharacter != null)
+            Destroy(tempCharacter);
         //InitCharacter(true);
     }
     public override void OnClientConnect(NetworkConnection conn)
     {
-        base.OnClientConnect(conn);
         //Happens on client side when connecting to the server
-        DebugPanel.Log("Mirror", "OnClientConnect " + conn.address, 5f);
+        base.OnClientConnect(conn);
         Debug.LogWarning("Mirror: OnClientConnect " + conn.address);
     }
     public override void OnServerConnect(NetworkConnection conn)
     {
-        base.OnServerConnect(conn);
         //Happens on server side when client connects to the server
-        DebugPanel.Log("Mirror", "OnServerConnect " + conn.address, 5f);
+        base.OnServerConnect(conn);
         Debug.LogWarning("Mirror: OnServerConnect " + conn.address);
-        //InitCharacter(true, conn);
+        //InitCharacter(conn);
     }
     public override void OnServerReady(NetworkConnection conn)
     {
         base.OnServerReady(conn);
-        DebugPanel.Log("Mirror", "OnServerReady " + conn.address, 5f);
         Debug.LogWarning("Mirror: OnServerReady " + conn.address);
-        //InitCharacter(true, conn);
-        //JoinRoom();
+        //InitCharacter(conn);
+    }
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        base.OnClientDisconnect(conn);
+        //DestroyCharacter(conn);
     }
 
     private void OnQuitting()
@@ -82,105 +101,137 @@ public class NetworkingCalls : NetworkManager
         }
     }
 
-    private void DestroyCharacter()
+    private void DestroyCharacter(NetworkConnection conn)
     {
-        if (currentMainCharacter != null)
-            Destroy(currentMainCharacter);
+        Debug.LogWarning("Mirror: Destroying player objects for " + conn.address);
+        NetworkServer.DestroyPlayerForConnection(conn);
     }
-    private void InitCharacter(bool networked, NetworkConnection conn = null)
+    private void InitCharacter(NetworkConnection conn)
     {
-        string debugMessage = "Instantiating " + (networked ? "" : "non-") + "networked character";
-        DebugPanel.Log("PUN", debugMessage, 5);
-        Debug.LogWarning(debugMessage);
-
-        DestroyCharacter();
-
-        if (networked)
-        {
-            currentMainCharacter = Instantiate(characterPrefabNetworked);
-            NetworkServer.Spawn(currentMainCharacter, conn);
-            //currentMainCharacter = PhotonNetwork.Instantiate(characterPrefabNetworked.name, Vector3.zero, Quaternion.identity);
-            currentlyNetworked = true;
-        }
-        else
-        {
-            currentMainCharacter = Instantiate(characterPrefab);
-            currentlyNetworked = false;
-        }
+        var currentMainCharacter = Instantiate(characterPrefabNetworked);
+        NetworkServer.Spawn(currentMainCharacter, conn);
 
         if (theater != null)
             currentMainCharacter.GetComponent<ChairTraverser>().Teleport(theater.GetRandomChair());
-        if (ovrRig != null)
-            currentMainCharacter.GetComponent<CharacterInput>().ovrRig = ovrRig;
     }
 
-    public void ConnectToPun()
+    public void StartServerInstance()
     {
         StartServer();
-        //PhotonNetwork.ConnectUsingSettings();
     }
-    public void CreateRoom()
+    public void Host()
     {
         StartHost();
-        //StartServer();
-        //NetworkServer.Listen(4);
     }
-    public void JoinRoom()
+    public void Join()
     {
-        NetworkClient.RegisterHandler<NetworkEvent>(OnEvent); //Will probably be better off in one of the start/stop functions
         StartClient();
-        //NetworkClient.Connect(uri);
     }
 
-    public void CallPlayEvent()
+    public GameObject GetLocalClientCharacterObject()
     {
-        if (NetworkServer.active || NetworkClient.active)
-            RaiseNetworkedEvent(1); // Custom Event 1: Used as "PlayTogether" event
+        return localClientCharacter;
+    }
+
+    //Used for UI events
+    public void CallPlayEventAsClient()
+    {
+        GetLocalClientCharacterObject().GetComponent<CharacterInput>().SendPlay();
+    }
+    //Used for UI events
+    public void CallPauseEventAsClient()
+    {
+        GetLocalClientCharacterObject().GetComponent<CharacterInput>().SendPause();
+    }
+    //Used for UI events
+    public void CallSeekEventAsClient(float value)
+    {
+        long frame = (long)(value * (unityVideoPlayer.frameCount - 1));
+        GetLocalClientCharacterObject().GetComponent<CharacterInput>().SendSeek(frame);
+    }
+    public void CallPlayEventAsServer()
+    {
+        if (NetworkServer.active)
+            RaisePlaybackEvent(1); // Custom Event 1: Used as "PlayTogether" event
         else
             InvokePlay();
     }
-    public void CallPauseEvent()
+    public void CallPauseEventAsServer()
     {
-        if (NetworkServer.active || NetworkClient.active)
-            RaiseNetworkedEvent(2); // Custom Event 2: Used as "PauseTogether" event
+        if (NetworkServer.active)
+            RaisePlaybackEvent(2); // Custom Event 2: Used as "PauseTogether" event
         else
             InvokePause();
     }
+    public void CallSeekEventAsServer(long frame)
+    {
+        if (NetworkServer.active)
+            RaiseSeekEvent(frame);
+        else
+            InvokeSeek(frame);
+    }
 
-    private void RaiseNetworkedEvent(byte eventCode)
+    private void RaisePlaybackEvent(byte eventCode)
     {
         if (NetworkServer.active)
         {
-            var networkEvent = new NetworkEvent() { eventCode = eventCode };
-            NetworkServer.SendToAll(networkEvent);
-            OnEvent(networkEvent);
+            var playbackEvent = new PlaybackEvent() { eventCode = eventCode };
+            NetworkServer.SendToAll(playbackEvent);
+            OnPlaybackEvent(playbackEvent);
         }
         else
         {
-            DebugPanel.Log("Mirror", "Cannot send event if not server", 5f);
-            Debug.LogWarning("Mirror: Cannot send event if not server");
+            Debug.LogError("Mirror: Cannot send event if not server");
+        }
+    }
+    private void RaiseSeekEvent(long frame)
+    {
+        if (NetworkServer.active)
+        {
+            var seekEvent = new SeekEvent() { frame = frame };
+            NetworkServer.SendToAll(seekEvent);
+            OnSeekEvent(seekEvent);
+        }
+        else
+        {
+            Debug.LogError("Mirror: Cannot send event if not server");
         }
     }
 
-    public void OnEvent(NetworkEvent networkEvent)
+    public void OnPlaybackEvent(PlaybackEvent playbackEvent)
     {
-        if (networkEvent.eventCode == 1)
+        if (playbackEvent.eventCode == 1)
             InvokePlay();
-        else if (networkEvent.eventCode == 2)
+        else if (playbackEvent.eventCode == 2)
             InvokePause();
+    }
+    public void OnSeekEvent(SeekEvent seekEvent)
+    {
+        InvokeSeek(seekEvent.frame);
     }
 
     private void InvokePlay()
     {
-        onPlay?.Invoke();
+        //onPlay?.Invoke();
+        unityVideoPlayer.Play();
     }
     private void InvokePause()
     {
-        onPause?.Invoke();
+        //onPause?.Invoke();
+        unityVideoPlayer.Pause();
+    }
+    private void InvokeSeek(long frame)
+    {
+        //onScrub?.Invoke(frame);
+        unityVideoPlayer.Seek(frame);
     }
 
-    public class NetworkEvent : MessageBase
+    public class PlaybackEvent : MessageBase
     {
         public byte eventCode;
+    }
+    public class SeekEvent : MessageBase
+    {
+        public long frame;
     }
 }
